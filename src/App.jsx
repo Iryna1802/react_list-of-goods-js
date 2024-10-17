@@ -20,18 +20,7 @@ const SORT_FIELD_NAME = 'name';
 const SORT_FIELD_LENGTH = 'length';
 const ENTER_GOODS = goodsFromServer;
 
-function filter(arr) {
-  // eslint-disable-next-line no-plusplus
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i] !== ENTER_GOODS[i]) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-function getPreparedGoods(goods, sortField, reverse) {
+function prepareSortedGoods(goods, sortField, reverse) {
   const preparedGoods = [...goods];
 
   if (sortField) {
@@ -61,7 +50,7 @@ export const App = () => {
   const [firstList, nextList] = useState(goodsFromServer);
 
   const [reverse, setReverse] = useState(false);
-  const visibleGoods = getPreparedGoods(firstList, sortField, reverse);
+  const visibleGoods = prepareSortedGoods(firstList, sortField, reverse);
 
   return (
     <div className="section content">
@@ -106,7 +95,7 @@ export const App = () => {
           Reverse
         </button>
 
-        {!filter(visibleGoods) && (
+        {!visibleGoods.every((good, index) => good === ENTER_GOODS[index]) && (
           <button
             type="button"
             onClick={() => {
@@ -123,8 +112,11 @@ export const App = () => {
 
       <div>
         <ul>
-          {visibleGoods.map(good => (
-            <li data-cy="Good">{good}</li>
+          {visibleGoods.map((good, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <li data-cy="Good" key={index}>
+              {good}
+            </li>
           ))}
         </ul>
       </div>
